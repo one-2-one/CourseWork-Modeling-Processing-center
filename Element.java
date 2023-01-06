@@ -1,258 +1,263 @@
-import java.util.Vector;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
 
 public class Element {
-    static int countID = 0;
+    static int idCount = 0;
     double currentTime;
     Double[] nextTime;
     double delayMean;
-    double retentionDeviation;
-    String distributionType;
+    double delayDev;
+    String dis_type;
     String processName;
+    int state;
     int id;
     int deviceCount;
     Integer[] states;
     Task[] tasks;
-    int state;
     int failCount;
-    int allProcCount;
+    int successfulTasks;
     Vector<Element> nextElem;
     Vector<Double> elemProb;
 
-    Integer[] successTasks;
-    Double[] spentTime;
-    Double queueObjTime;
-    int isRandom;
-    boolean taskBackToQueue = false;
+    Integer[] doneTask;
+    Double[] usedTime;
+    Double queueObjects;
+    int nextElemType;
+    boolean isBack=false;
 
-    public Element() {
-        this.currentTime = 0.0;
-        this.nextTime = new Double[] { Double.MAX_VALUE };
-        this.delayMean = 1.0;
-        this.retentionDeviation = 1.0;
-        this.distributionType = "normal";
-        this.isRandom = 1;
-        this.id = countID;
-        this.deviceCount = 1;
-        this.states = new Integer[] { 0 };
-        this.tasks = new Task[] {
-                new Task()
-        };
-        this.state = 0;
-        this.queueObjTime = 0.0;
+    public Element(){
+        currentTime = 0.0;
+        nextTime = new Double[]{Double.MAX_VALUE};
+        delayMean = 1.0;
+        delayDev = 1.0;
+        dis_type = "normal";
+        nextElemType = 2;
+        id = idCount;
+        deviceCount=1;
+        states = new Integer[]{0};
+        tasks = new Task[]{new Task()};
+        state = 0;
+        queueObjects = 0.0;
 
-        this.failCount = 0;
-        this.allProcCount = 0;
-        this.nextElem = null;
+        failCount = 0;
+        successfulTasks = 0;
+        nextElem = null;
 
-        this.successTasks = new Integer[] { 0 };
-        this.spentTime = new Double[] { 0.0 };
+        doneTask = new Integer[]{0};
+        usedTime = new Double[]{0.0};
 
-        this.processName = "PROC";
+        processName = "Default proccess name";
 
-        this.nextElem = new Vector<>();
-        this.elemProb = new Vector<>();
+        nextElem = new Vector<>();
+        elemProb = new Vector<>();
 
-        countID++;
+        idCount++;
     }
 
-    public Element(double del) {
-        this.currentTime = 0.0;
-        this.nextTime = new Double[] { Double.MAX_VALUE };
-        this.delayMean = del;
-        this.retentionDeviation = 1.0;
-        this.distributionType = "";
-        this.isRandom = 1;
-        this.id = countID;
-        this.state = 0;
-        this.deviceCount = 1;
-        this.states = new Integer[] { 0 };
-        this.tasks = new Task[] { new Task() };
-        this.failCount = 0;
-        this.allProcCount = 0;
-        this.nextElem = null;
-        this.queueObjTime = 0.0;
+    public Element(double deviation){
+        currentTime = 0.0;
+        nextTime = new Double[]{Double.MAX_VALUE};
+        delayDev = deviation;
+        dis_type = "";
+        nextElemType = 2;
+        id = idCount;
+        state = 0;
+        deviceCount=1;
+        states = new Integer[]{0};
+        tasks = new Task[]{new Task()};
+        failCount = 0;
+        successfulTasks = 0;
+        nextElem = null;
+        queueObjects = 0.0;
 
-        this.processName = "Default process name";
+        processName = "Default proccess name";
 
-        this.successTasks = new Integer[] { 0 };
-        this.spentTime = new Double[] { 0.0 };
+        doneTask = new Integer[]{0};
+        usedTime =  new Double[]{0.0};
 
-        this.nextElem = new Vector<>();
-        this.elemProb = new Vector<>();
+        nextElem = new Vector<>();
+        elemProb = new Vector<>();
 
-        countID++;
+        idCount++;
     }
 
-    public Element(double del, double deviation) {
-        this.currentTime = 0.0;
-        this.nextTime = new Double[] { Double.MAX_VALUE };
-        this.delayMean = del;
-        this.retentionDeviation = deviation;
-        this.distributionType = "";
-        this.isRandom = 1;
-        this.id = countID;
-        this.state = 0;
-        this.deviceCount = 1;
-        this.states = new Integer[] { 0 };
-        this.tasks = new Task[] { new Task() };
-        this.failCount = 0;
-        this.allProcCount = 0;
-        this.nextElem = null;
-        this.queueObjTime = 0.0;
+    public Element(double delay, double devitation){
+        currentTime = 0.0;
+        nextTime = new Double[]{Double.MAX_VALUE};
+        delayMean = delay;
+        delayDev = devitation;
+        dis_type = "";
+        nextElemType = 2;
+        id = idCount;
+        state = 0;
+        deviceCount=1;
+        states = new Integer[]{0};
+        tasks = new Task[]{new Task()};
+        failCount = 0;
+        successfulTasks = 0;
+        nextElem = null;
+        queueObjects = 0.0;
 
-        this.processName = "Default process name";
+        processName = "Default proccess name";
 
-        this.successTasks = new Integer[] { 0 };
-        this.spentTime = new Double[] { 0.0 };
+        doneTask = new Integer[]{0};
+        usedTime =  new Double[]{0.0};
 
-        this.nextElem = new Vector<>();
-        this.elemProb = new Vector<>();
+        nextElem = new Vector<>();
+        elemProb = new Vector<>();
 
-        countID++;
+        idCount++;
     }
 
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
-
-    public void setDistributionType(String distributionType) {
-        this.distributionType = distributionType;
-    }
-
-    public Element setNextElem(boolean taskBackToQueue) {
+    public Element setNextElement(boolean isReturn){
         int id = 0;
-        this.taskBackToQueue = taskBackToQueue;
+        isBack = isReturn;
 
-        if (this.isRandom == 0) {
-            id = setNextPrior();
-        } else if (this.isRandom == 1) {
-            id = setNextRand();
-        } else if (this.isRandom == 2) {
-            id = this.setNextPriorQueue();
-        } else if (this.isRandom == 3) {
-            id = setNextReturn(taskBackToQueue);
+        switch (nextElemType){
+            case 0:
+            {
+                id = setNextPriority();
+                break;
+            }
+            case 1:
+            {
+                id = setNextRandom();
+                break;
+            }
+            case 2:
+            {
+                id = setNextPriorityQueue();
+                break;
+            }
+            case 3:
+            {
+                id = setNextReturnWay(isReturn);
+                break;
+            }
         }
-
         return nextElem.get(id);
     }
 
-    private int setNextReturn(boolean taskBackToQueue) {
-        int id = 0;
-        if (taskBackToQueue) {
-            id = 1;
-        }
-        return id;
+    private int setNextReturnWay(boolean isReturn){
+        int ind=0;
+        if (isReturn)
+        {
+            ind = 1;
+        } 
+        return ind;
     }
 
-    private int setNextPrior() {
+    private int setNextPriority(){
         Double min = 1000000.0;
-        int index = 0;
-        for (int i = 0; i < elemProb.size(); i++) {
-            if (Arrays.asList(nextElem.get(i).states).contains(0) && elemProb.get(i) < min) {
+        int ind = 0;
+        for (int i=0; i<elemProb.size();i++){
+            if (Arrays.asList(nextElem.get(i).states).contains(0) && elemProb.get(i)<min){
                 min = elemProb.get(i);
-                index = i;
+                ind = i;
             }
         }
 
-        return index;
+        return ind;
     }
 
-    private int setNextPriorQueue() {
+    private int setNextPriorityQueue(){
         Double min = 1000000.0;
-        Double minPrior = 1000000.0;
+        Double minP = 1000000.0;
         int ind = 0;
-        for (int i = 0; i < elemProb.size(); i++) {
-            if (nextElem.get(i).getQueue().size() < min
-                    || (nextElem.get(i).getQueue().size() == min && elemProb.get(i) < minPrior)) {
-                min = (double) (nextElem.get(i).getQueue().size());
-                minPrior = elemProb.get(i);
+        for (int i=0; i<elemProb.size();i++){
+            if ((nextElem.get(i).getQueue().size() == min && elemProb.get(i) < minP) ||nextElem.get(i).getQueue().size()<min){
+                min = (double)(nextElem.get(i).getQueue().size());
+                minP=elemProb.get(i);
                 ind = i;
             }
         }
         return ind;
     }
 
-    private int setNextRand() {
+    private int setNextRandom(){
         Double sum = 0.0;
-        for (Double element : elemProb) {
-            sum += element;
-        }
+        for (Double elem: elemProb)
+        {
+            sum += elem;
+        } 
 
-        Double res = Math.random() * sum;
-        Double a = 0.0;
-        int id = 0;
+        Double res = Math.random()*sum;
+        Double tmp = 0.0;
+        int ind = 0;
 
-        for (int i = 0; i < elemProb.size(); i++) {
-            a += elemProb.get(i);
-            if (res <= a) {
-                id = i;
+        for (int i=0; i<elemProb.size();i++)
+        {
+            tmp += elemProb.get(i);
+            if (res <= tmp) {
+                ind = i;
                 break;
             }
         }
-        return id;
+        return ind;
     }
 
-    public void setNextElem(Element elem, Double prob) {
-        this.nextElem.add(elem);
-        this.elemProb.add(prob);
+    public void setNextElement(Element el, Double probability)
+    {
+        nextElem.add(el);
+        elemProb.add(probability);
     }
 
-    public void setDeviceCount(int count) {
-        this.deviceCount = count;
-        this.states = new Integer[count];
-        this.tasks = new Task[count];
-        this.nextTime = new Double[count];
-        this.spentTime = new Double[count];
-        this.successTasks = new Integer[count];
+    public void setDeviceCount(int count)
+    {
+        deviceCount=count;
+        states = new Integer[count];
+        tasks = new Task[count];
+        nextTime = new Double[count];
+        usedTime = new Double[count];
+        doneTask = new Integer[count];
 
-        for (int i = 0; i < count; i++) {
-            this.states[i] = 0;
-            this.nextTime[i] = Double.MAX_VALUE;
-            this.spentTime[i] = 0.0;
-            this.successTasks[i] = 0;
+        for (int i=0; i<count;i++) 
+        {
+            states[i]=0;
+            nextTime[i]=Double.MAX_VALUE;
+            usedTime[i]=0.0;
+            doneTask[i]=0;
         }
-        this.nextTime[0] = Double.MAX_VALUE;
+        nextTime[0] = Double.MAX_VALUE;
     }
 
-    public double getDelay(int proc) {
-        double delay = delayMean;
-            if (distributionType == "normal") {
-                delay = Random.normal(delayMean, retentionDeviation);
-            } else if (distributionType == "exponential") {
+    public double getDelay(int proc){
+        double delay = this.delayMean;
+        switch (dis_type)
+        {
+            case "normal":
+                delay = Random.normal(delayMean,delayDev);
+                break;
+            case "exponent":
                 delay = Random.exponential(delayMean);
-            } else if (distributionType == "uniform") {
-                delay = Random.uniform(delayMean, retentionDeviation);
-            } else if (distributionType == "erlang") {
-                delay = Random.erlang(delayMean, retentionDeviation);
-            } 
-            // else {
-            //     if (tasks[proc].taskType == 1) {
-            //         delay = Random.exponential(15.0);
-            //     } else if (tasks[proc].taskType == 2) {
-            //         delay = Random.exponential(40.0);
-            //     } else if (tasks[proc].taskType == 3) {
-            //         delay = Random.exponential(30.0);
-            //     } else {
-            //         delay = delayMean;
-            //     }
-
-            // }
+                break;
+            case "even":
+                delay = Random.even(delayMean,delayDev);
+                break;
+            default:
+                delay = delayMean;
+                break;
+        }
         return delay;
     }
 
-    public ArrayList<Task> getQueue() {
-        return new ArrayList<>() {
-        };
+    public ArrayList<Task> getQueue()
+    {
+        return new ArrayList<>(){};
     }
 
-    public void setQueue(ArrayList<Task> q) {
+    public void setQueue(ArrayList<Task> q)
+    {
+
     }
 
-    public void in(Task task) {
-    }
+    public void in(Task task)
+    {
 
-    public void out() {
+    }
+    public void out()
+    {
+
     }
 }

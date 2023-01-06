@@ -1,24 +1,29 @@
+
+
 public class Task {
     double startTime;
-    double endTime;
+    double finishTime;
     int taskType;
+    int taskSizeBytes;
 
-    public Task() {
-        this.startTime = 0.0;
-        this.endTime = 0.0;
-        this.taskType = 0;
+    public Task(){
+        startTime=0;
+        finishTime=0;
+        taskType=0;
+        this.taskSizeBytes = Random.getTaskSizeBytes();
+    }
+    public Task(double start, int type) {
+        startTime = start;
+        finishTime = 0.0;
+        taskType = type;
+        this.taskSizeBytes = Random.getTaskSizeBytes();
+    }
+    public Task(double start){
+        startTime=start;
+        finishTime=0;
+        taskType=0;
+        this.taskSizeBytes = Random.getTaskSizeBytes();
     }
 
-    public Task(double time) {
-        this.startTime = time;
-        this.endTime = 0.0;
-        this.taskType = 0;
-    }
-
-    public Task(double time, int type) {
-        this.startTime = time;
-        this.endTime = 0.0;
-        this.taskType = type;
-    }
 
 }
