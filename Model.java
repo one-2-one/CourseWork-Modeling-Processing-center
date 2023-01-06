@@ -42,24 +42,26 @@ public class Model {
         double prExOld = 0.0;
         double prExTime = 0.0;
         int prEnCount = 0;
-        int step = 0;
+        int inputStep = 0;
+        int processingStep = 0;
+        int outputStep = 0;
+
         if (showAnalytics) 
         {
-            System.out.println("\nstep;bufferSize");
+            System.out.println("\nprocessName;bufferSize");
         }
 
         while(time < maxTime)
         {
             step(false);
             double oldTime = execStep();
-            if (!model.get(processNum).processName.equalsIgnoreCase("Producer") ){
+            if (!model.get(processNum).processName.equalsIgnoreCase("Producer")){
                 prExTime += (time - prExOld);
                 prExOld = time;
                 prEnCount ++;
             }
 
-            additionalStep(oldTime, step);
-            step++;
+            additionalStep(oldTime, inputStep,processingStep,outputStep);
         }
 
         double cli_time=0.0;
@@ -93,7 +95,7 @@ public class Model {
         }
     }
 
-    private void additionalStep(double oldTime, int step){
+    private void additionalStep(double oldTime, int inputStep, int processingStep, int outputStep){
         for (Element el : model) 
         {
             for (Double ele: el.nextTime){
@@ -115,7 +117,19 @@ public class Model {
                         bufferSize += task.taskSizeBytes;
                     }
                     if (bufferSize != 0) {
-                        System.out.println(step+";"+bufferSize);
+                        if (el.processName.equalsIgnoreCase("Input"))
+                        {
+                            System.out.println( "input;"+ bufferSize);
+
+                        }
+                        else if (el.processName.equalsIgnoreCase("Processing"))
+                        {
+                            System.out.println( "processing;"+ bufferSize);
+                        }
+                        else if (el.processName.equalsIgnoreCase("Output"))
+                        {
+                            System.out.println( "output;"+ bufferSize);
+                        }
                     }
                 }
 
@@ -189,6 +203,6 @@ public class Model {
 
         }
         System.out.println();
-        System.out.println("Total fail count: "+failCount+", or "+failCount/(successCount)*100 +"%");
+        System.out.println("Total fail count: "+failCount+", or "+failCount/(successCount+ failCount)*100 +"%");
     }
 }

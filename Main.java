@@ -141,7 +141,7 @@ public class Main {
         list.add(processing);
         list.add(output);
 
-        Model model = new Model(list, false);
+        Model model = new Model(list, true);
         model.simulate(1000000);
         model.cleanup();
     }

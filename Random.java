@@ -40,9 +40,5 @@ public class Random {
         return p;
     }
 
-    // public static int getDelayCreateTask() {
-    //     int p = (int) (Math.random() * (400 - 200) + 200);
-    //     return p;
-    // }
 
 }
